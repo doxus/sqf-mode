@@ -1810,33 +1810,67 @@
   "Default offset used for indentation in SQF mode"
   :type '(integer))
 
+(defconst sqf-mode-start-of-block-regex ".*[[({]+\\([[:blank:]]*//.*\\)*$")
+(defconst sqf-mode-end-of-block-regex "[[:blank:]]*[])}]+.*")
+(defconst sqf-mode-comment-regex ".*//.*")
+
+(defun sqf-mode-in-comment ()
+  (nth 4 (syntax-ppss)))
+
+(defun sqf-mode-in-comment-or-string ()
+  (let ((in-string (nth 3 (syntax-ppss)))
+        (in-comment (nth 4 (syntax-ppss))))
+    (or in-comment in-string)))
+
+(defun sqf-mode-looking-at-block (regex check_comment_string)
+  (save-excursion
+    (end-of-line)
+    (catch 'break
+      (while (looking-back (concat "^" regex))
+        (re-search-backward regex)
+        ;; are we inside a comment or string?
+        (if check_comment_string
+            (if (not (sqf-mode-in-comment-or-string)) (throw 'break t)))))))
+
+(defun sqf-mode-looking-at-start-block ()
+  (sqf-mode-looking-at-block sqf-mode-start-of-block-regex t))
+
+(defun sqf-mode-looking-at-end-block ()
+  (sqf-mode-looking-at-block sqf-mode-end-of-block-regex t))
+
+(defun sqf-mode-looking-at-single-line-comment ()
+  (sqf-mode-looking-at-block sqf-mode-comment-regex nil))
+
 (defun sqf-indent-line ()
-  "Indent current line of SQF code."
+  "Indent current line as `sqf-mode' code"
   (interactive)
   (beginning-of-line)
   (if (bobp)
       (indent-line-to 0)
     (let ((not-indented t) cur-indent)
-      (if (looking-at "^[[:blank:]]*\\w*[])}]") ;;match )]} i couldnt figure better matching to avoid {[(
+      (if (and (sqf-mode-in-comment) (not (sqf-mode-looking-at-single-line-comment)))
           (progn
-            (save-excursion
+            (setq cur-indent (+ (current-indentation) 4)))
+        (if (sqf-mode-looking-at-end-block)
+            (progn
+              (save-excursion
+                (forward-line -1)
+                (setq cur-indent (- (current-indentation) (if (sqf-mode-looking-at-start-block) '0 '4))))
+              (if (< cur-indent 0) (setq cur-indent 0)))
+          (save-excursion
+            (while not-indented
               (forward-line -1)
-              (setq cur-indent (- (current-indentation) sqf-basic-offset)))
-            (if (< cur-indent 0)
-                (setq cur-indent 0)))
-        (save-excursion
-          (while not-indented
-            (forward-line -1)
-            (if (looking-at "^[[:blank:]]*\\w*[])}]")
-                (progn
-                  (setq cur-indent (current-indentation))
-                  (setq not-indented nil))
-              (if (looking-at ".*[[({]+[ \\t]*\\(//.*\\)*$")
+              ;; (message "%s" (what-line))
+              (if (and (sqf-mode-looking-at-end-block) (not (sqf-mode-looking-at-start-block)))
                   (progn
-                    (setq cur-indent (+ (current-indentation) sqf-basic-offset))
+                    (setq cur-indent (current-indentation))
                     (setq not-indented nil))
-                (if (bobp)
-                    (setq not-indented nil)))))))
+                (if (and (sqf-mode-looking-at-start-block) (not (sqf-mode-looking-at-end-block)))
+                    (progn
+                      (setq cur-indent (+ (current-indentation) 4))
+                      (setq not-indented nil))
+                  (if (bobp)
+                      (setq not-indented nil))))))))
       (if cur-indent
           (indent-line-to cur-indent)
         (indent-line-to 0)))))
