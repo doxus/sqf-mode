@@ -10,13 +10,6 @@
 (add-to-list 'auto-mode-alist '("\\.sqm\\'" . sqf-mode))
 (add-to-list 'auto-mode-alist '("\\.fsm\\'" . sqf-mode))
 
-;;builtins
-;;    "and"    "do"    "else"    "exit"    "exitWith"    "false"    "for"    "forEach"    "forEachMember"    "forEachMemberAgent"    "forEachMemberTeam"    "from"    "if"    "in"    "nil"    "not"    "or"    "then"    "to"    "true"    "try"    "waitUntil"    "with"    "while"
-(defconst sqf-font-lock-keywords-basic
-  (list
-   '("\\<\\(and\\|do\\|e\\(?:lse\\|xit\\(?:With\\)?\\)\\|f\\(?:alse\\|or\\(?:Each\\(?:Member\\(?:Agent\\|Team\\)?\\)?\\)?\\|rom\\)\\|i[fn]\\|n\\(?:il\\|ot\\)\\|or\\|t\\(?:hen\\|o\\|r\\(?:ue\\|y\\)\\)\\|w\\(?:aitUntil\\|hile\\|ith\\)\\)\\>" . font-lock-keyword-face))
-  "Builtin SQF keywords")
-
 (defvar sqf-mode-keywords
   '("abs"
     "accTime"
@@ -1779,6 +1772,13 @@
     "worldToModel"
     "worldToModelVisual"
     "worldToScreen"))
+
+;;builtins
+;;    "and"    "do"    "else"    "exit"    "exitWith"    "false"    "for"    "forEach"    "forEachMember"    "forEachMemberAgent"    "forEachMemberTeam"    "from"    "if"    "in"    "nil"    "not"    "or"    "then"    "to"    "true"    "try"    "waitUntil"    "with"    "while"
+(defconst sqf-font-lock-keywords-basic
+  (list
+   '("\\<\\(and\\|do\\|e\\(?:lse\\|xit\\(?:With\\)?\\)\\|f\\(?:alse\\|or\\(?:Each\\(?:Member\\(?:Agent\\|Team\\)?\\)?\\)?\\|rom\\)\\|i[fn]\\|n\\(?:il\\|ot\\)\\|or\\|t\\(?:hen\\|o\\|r\\(?:ue\\|y\\)\\)\\|w\\(?:aitUntil\\|hile\\|ith\\)\\)\\>" . font-lock-keyword-face))
+  "Builtin SQF keywords")
 
 ;;functions - standard
 (defconst sqf-font-lock-keywords-functions-extensive
