@@ -1,15 +1,3 @@
-(defvar sqf-mode-hook nil)
-
-(defvar sqf-mode-map
-  (let ((map (make-sparse-keymap)))
-    map)
-  "Keymap for SQF major mode")
-
-;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.sqf\\'" . sqf-mode))
-(add-to-list 'auto-mode-alist '("\\.sqm\\'" . sqf-mode))
-(add-to-list 'auto-mode-alist '("\\.fsm\\'" . sqf-mode))
-
 (defvar sqf-mode-keywords
   '("abs"
     "accTime"
@@ -1805,6 +1793,14 @@
     st)
   "Syntax table for `sqf-mode'.")
 
+(defvar sqf-mode-hook nil)
+
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.sqf\\'" . sqf-mode))
+(add-to-list 'auto-mode-alist '("\\.sqm\\'" . sqf-mode))
+(add-to-list 'auto-mode-alist '("\\.fsm\\'" . sqf-mode))
+
+
 ;;;###autoload
 (defcustom sqf-basic-offset 4
   "Default offset used for indentation in SQF mode"
@@ -1884,6 +1880,10 @@
   (setq-local font-lock-defaults
               '(sqf-font-lock-keywords))
   (setq-local indent-line-function 'sqf-indent-line))
+
+(defun sqf-check-wiki-at-point ()
+  (interactive)
+  (eww (concat "https://community.bistudio.com/wiki/" (thing-at-point 'word 'no-properties))))
 
 (provide 'sqf-mode)
 
