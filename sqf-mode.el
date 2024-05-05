@@ -1806,7 +1806,7 @@
   "Default offset used for indentation in SQF mode"
   :type '(integer))
 
-(defconst sqf-mode-start-of-block-regex ".*[[({]+\\([[:blank:]]*//.*\\)*$")
+(defconst sqf-mode-start-of-block-regex ".*[[({]+[\r\n ]\\([[:blank:]]*//.*\\)*$")
 (defconst sqf-mode-end-of-block-regex "[[:blank:]]*[])}]+.*")
 (defconst sqf-mode-comment-regex ".*//.*")
 
