@@ -1806,7 +1806,7 @@
   "Default offset used for indentation in SQF mode"
   :type '(integer))
 
-(defconst sqf-mode-start-of-block-regex ".*[[({]+[\r\n ]\\([[:blank:]]*//.*\\)*$")
+(defconst sqf-mode-start-of-block-regex ".*[[({]+\\(\\([\r\n\t ]*$\\)\\|\\([[:blank:]]*//.*$\\)\\)")
 (defconst sqf-mode-end-of-block-regex "[[:blank:]]*[])}]+.*")
 (defconst sqf-mode-comment-regex ".*//.*")
 
@@ -1822,7 +1822,7 @@
   (save-excursion
     (end-of-line)
     (catch 'break
-      (while (looking-back (concat "^" regex))
+      (while (looking-back (concat "^" regex) nil t)
         (re-search-backward regex)
         ;; are we inside a comment or string?
         (if check_comment_string
